@@ -11,7 +11,6 @@ function createCourses() {
 function render(){
 const list = document.getElementById("courses");
 const listArray = createCourses();
-console.log(listArray);
 list.innerHTML = listArray.map(i => `<li>${JSON.stringify(i)}</li>`).join("");
 }
 render();
