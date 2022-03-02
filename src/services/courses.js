@@ -27,9 +27,9 @@ export default class Courses {
         return id;
     }
     exists(id) {
-        if(this.#courses.filter(n => n.id == id).length) {
-         return true 
-        } 
-        return false;
+        return !!this.#courses.find(c => c.id === id);
+    }
+    get() {
+        return this.#courses;
     }
 }

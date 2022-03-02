@@ -14,15 +14,32 @@ export default class FormHandler {
             .reduce((obj, element) => {
                 obj[element.name] = element.value;
                 return obj;
-            }, {});
+            }, {})
             const message = fnProcessor(data);
-            if (typeof message != "string") {
-                this.#formElement.reset();
+            if (!message) {
+                this.#formElement.reset(); //everything ok
+                this.#alertElement.innerHTML = '';
             } else {
-                this.#alertElement.innerHTML =  `<div class="alert alert-warning alert-dismissible fade show" role="alert">
-                <strong>${message}</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">CLOSE</button></div>`
+                const alert = `
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Error!</strong> ${message}.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>`;
+            this.#alertElement.innerHTML = alert;
             }
         })
     }
+    fillOptions(idOptions, options ) {
+        document.getElementById(idOptions).innerHTML = 
+        `${getOptions(options, idOptions)}`
+    }
+    show() {
+        this.#formElement.hidden = false;
+    }
+    hide() {
+        this.#formElement.hidden = true;
+    }
+}
+function getOptions(options, idOptions) {
+    return `<option value="" disabled selected>--select ${document.getElementById(idOptions).name}--</option>` + options.map(o => `<option value="${o}">${o}</option>`).join('');
 }
