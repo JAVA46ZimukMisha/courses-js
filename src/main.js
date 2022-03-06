@@ -4,6 +4,7 @@ import Courses from './services/courses';
 import FormHandler from './ui/form_handler';
 import TableHandler from './ui/table_handler';
 import { getRandomCourse } from './utils/randomCourse';
+import _ from 'lodash'
 const N_COURSES = 5;
 function createCourses() {
     const courses = [];
@@ -24,7 +25,7 @@ const tableHandler = new TableHandler([
     {key: 'lecturer', displayName: 'Lecturer Name'},
     {key: 'cost', displayName: "Cost (ILS)"},
     {key: 'hours', displayName: "Course Duration (h)"}
-], "courses-table");
+], "courses-table", "sortCourses");
 const statisticTable = new TableHandler([
     {key : 'minInterval', displayName: 'minInterval'},
     {key: 'maxInterval', displayName: 'maxInterval'},
@@ -49,6 +50,9 @@ window.showForm = () => {
 window.showCourses = () => {
     tableHandler.showTable(dataProcessor.getAllCourses());
     formHandler.hide();
+}
+window.sortCourses = (key) => {
+    tableHandler.showTable(dataProcessor.sortCourses(key))
 }
 window.showHoursStatistics = () => {
     statisticTable.showHourTable(dataProcessor.getHoursStatistics(courseData.hoursInterval));

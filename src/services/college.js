@@ -1,3 +1,4 @@
+import _ from "lodash";
 // Data processor
 export default class College {
     #courseData
@@ -34,6 +35,9 @@ export default class College {
     }
     getAllCourses() {
         return this.#courses.get()
+    }
+    sortCourses(key) {
+        return _.sortBy(this.getAllCourses(), key)
     }
     getHoursStatistics(lengthInterval) {
         let minInt = this.#courseData.minHours;
