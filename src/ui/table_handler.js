@@ -2,9 +2,6 @@ export default class TableHandler {
     #tableElem
     #columnsDefinition
     constructor(columnsDefinition, idTable) {
-        //example of columnsDefinition:
-        // const columns = [{'key': 'name', 'displayName':'Course Name'},
-        // {'key': 'lecturer', 'displayName': 'Lecturer Name'}... ]
         this.#columnsDefinition = columnsDefinition;
         this.#tableElem = document.getElementById(idTable);
         if (!this.#tableElem) {
@@ -14,7 +11,13 @@ export default class TableHandler {
 
     }
     showTable(objects) {
-        this.#tableElem.innerHTML = `${this.#getHeader()}${this.#getBody(objects)}`;
+        this.#tableElem.innerHTML = `${this.#getHeader()}${this.#getBody(objects)}`
+    }
+    showHourTable(objects) {
+        this.#tableElem.innerHTML = `<caption style="text-align: center; font-size: 250%">Hours Statistics</caption>${this.#getHeader()}${this.#getBody(objects)}`
+    }
+    showCostTable(objects) {
+        this.#tableElem.innerHTML = `<caption style="text-align: center; font-size: 250%">Cost Statistics</caption>${this.#getHeader()}${this.#getBody(objects)}`
     }
     hideTable() {
         this.#tableElem.innerHTML = ''

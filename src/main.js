@@ -25,6 +25,11 @@ const tableHandler = new TableHandler([
     {key: 'cost', displayName: "Cost (ILS)"},
     {key: 'hours', displayName: "Course Duration (h)"}
 ], "courses-table");
+const statisticTable = new TableHandler([
+    {key : 'minInterval', displayName: 'minInterval'},
+    {key: 'maxInterval', displayName: 'maxInterval'},
+    {key: 'amount', displayName: 'amount'}
+], "courses-table")
 const formHandler = new FormHandler("courses-form", "alert");
 formHandler.addHandler(course => {
     const res = dataProcessor.addCourse(course);
@@ -44,4 +49,12 @@ window.showForm = () => {
 window.showCourses = () => {
     tableHandler.showTable(dataProcessor.getAllCourses());
     formHandler.hide();
+}
+window.showHoursStatistics = () => {
+    statisticTable.showHourTable(dataProcessor.getHoursStatistics(courseData.hoursInterval));
+    formHandler.hide()
+}
+window.showCostStatistics = () => {
+    formHandler.hide();
+    statisticTable.showCostTable(dataProcessor.getCostStatistics(courseData.costInterval));
 }
