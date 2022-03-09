@@ -15,6 +15,7 @@ export default class FormHandler {
                 obj[element.name] = element.value;
                 return obj;
             }, {})
+            console.log(data)
             const message = fnProcessor(data);
             if (!message) {
                 this.#formElement.reset(); //everything ok
@@ -29,9 +30,18 @@ export default class FormHandler {
             }
         })
     }
+    createHandler(fnProcessor) {
+        let courses = [];
+        this.#formElement.addEventListener('submit', event => {
+            event.preventDefault();
+            let amount = Array.from(this.#inputElements);
+            courses = fnProcessor(courses, amount[0].value);
+        })
+     return courses;
+    }
     fillOptions(idOptions, options ) {
-        document.getElementById(idOptions).innerHTML = 
-        `${getOptions(options, idOptions)}`
+        document.getElementById(idOptions).innerHTML += 
+        `${getOptions(options)}`
     }
     show() {
         this.#formElement.hidden = false;
@@ -40,6 +50,6 @@ export default class FormHandler {
         this.#formElement.hidden = true;
     }
 }
-function getOptions(options, idOptions) {
-    return `<option value="" disabled selected>--select ${document.getElementById(idOptions).name}--</option>` + options.map(o => `<option value="${o}">${o}</option>`).join('');
+function getOptions(options) {
+    return options.map(o => `<option value="${o}">${o}</option>`).join('');
 }

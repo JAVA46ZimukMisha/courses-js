@@ -5,33 +5,31 @@ import FormHandler from './ui/form_handler';
 import TableHandler from './ui/table_handler';
 import { getRandomCourse } from './utils/randomCourse';
 import _ from 'lodash'
-const N_COURSES = 5;
-function createCourses() {
-    const courses = [];
-    for (let i = 0; i < N_COURSES; i++) {
+import NavigatorButtons from './ui/navigators-buttons';
+const statisticsColumnDefinition = [
+    { key: "minInterval", displayName: "From" },
+    { key: "maxInterval", displayName: "To" },
+    { key: "amount", displayName: "Amount" }
+]
+const courseGenerate = new FormHandler("amount-courses", "alert");
+const courses = courseGenerate.createHandler((courses, amount) => {
+    for (let i = 0; i < amount; i++) {
         courses.push(getRandomCourse(courseData));
     }
     return courses;
-}
-
-
-const courses = createCourses();
+})
 
 const dataProvider = new Courses(courseData.minId, courseData.maxId, courses);
 const dataProcessor = new College(dataProvider, courseData);
 const tableHandler = new TableHandler([
-    {key: 'id', displayName: 'ID'},
-    {key: 'name', displayName: 'Course Name'},
-    {key: 'lecturer', displayName: 'Lecturer Name'},
-    {key: 'cost', displayName: "Cost (ILS)"},
-    {key: 'hours', displayName: "Course Duration (h)"}
-], "courses-table", "sortCourses");
-const statisticTable = new TableHandler([
-    {key : 'minInterval', displayName: 'minInterval'},
-    {key: 'maxInterval', displayName: 'maxInterval'},
-    {key: 'amount', displayName: 'amount'}
-], "courses-table")
+    { key: 'id', displayName: 'ID' },
+    { key: 'name', displayName: 'Course' },
+    { key: 'lecturer', displayName: 'Lecturer' },
+    { key: 'cost', displayName: "Cost (ILS)" },
+    { key: 'hours', displayName: "Duration (h)" }
+], "courses-table", "sortCourses", "removeCourse");
 const formHandler = new FormHandler("courses-form", "alert");
+const activeNavigator = new NavigatorButtons (["addCourse", "showCourse", "showHours", "showCost", "amount"]);
 formHandler.addHandler(course => {
     const res = dataProcessor.addCourse(course);
     if (typeof (res) !== 'string') {
@@ -42,23 +40,50 @@ formHandler.addHandler(course => {
 })
 formHandler.fillOptions("course-name-options", courseData.courses);
 formHandler.fillOptions("lecturer-options", courseData.lectors);
-
-window.showForm = () => {
-    formHandler.show();
+const tableHoursStatistics =
+    new TableHandler(statisticsColumnDefinition, "courses-table");
+const tableCostStatistics =
+    new TableHandler(statisticsColumnDefinition, "courses-table");
+function hide() {
     tableHandler.hideTable();
+    formHandler.hide();
+    tableHoursStatistics.hideTable();
+    tableCostStatistics.hideTable();
+    courseGenerate.hide();
+
+}
+window.showForm = () => {
+    hide();
+    formHandler.show();
+    activeNavigator.setActive(0);
 }
 window.showCourses = () => {
+    hide();
     tableHandler.showTable(dataProcessor.getAllCourses());
-    formHandler.hide();
+    activeNavigator.setActive(1);
+}
+window.showHoursStatistics = () => {
+    hide()
+    tableHoursStatistics.showTable(dataProcessor.getHoursStatistics(courseData.hoursInterval));
+    activeNavigator.setActive(2);
+}
+window.showCostStatistics = () => {
+    hide()
+    tableCostStatistics.showTable(dataProcessor.getCostStatistics(courseData.costInterval));
+    activeNavigator.setActive(3);
+}
+window.showAmountCoursesForm = () => {
+    hide()
+    courseGenerate.show();
+    activeNavigator.setActive(4);
 }
 window.sortCourses = (key) => {
     tableHandler.showTable(dataProcessor.sortCourses(key))
 }
-window.showHoursStatistics = () => {
-    statisticTable.showHourTable(dataProcessor.getHoursStatistics(courseData.hoursInterval));
-    formHandler.hide()
-}
-window.showCostStatistics = () => {
-    formHandler.hide();
-    statisticTable.showCostTable(dataProcessor.getCostStatistics(courseData.costInterval));
+window.removeCourse = (id) => {
+    if (window.confirm(`you are going to remove course id: ${id}`)) {
+        dataProcessor.removeCourse(+id);
+        tableHandler.showTable(dataProcessor.getAllCourses());
+    }
+
 }

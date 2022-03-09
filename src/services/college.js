@@ -1,4 +1,5 @@
 import _ from "lodash";
+
 // Data processor
 export default class College {
     #courseData
@@ -8,6 +9,11 @@ export default class College {
         this.#courseData = courseData;
     }
     addCourse(course) {
+        //TODO validation of the course data
+        //if course is valid, then course should be added : this.#courses.add(course)
+        //if course is invalid, then the method returns full message describing what's wrong
+        //if course is valid
+        //converting from strings to the proper types
         course.hours = +course.hours;
         course.cost = +course.cost;
         course.openingDate = new Date(course.openingDate);
@@ -39,41 +45,29 @@ export default class College {
     sortCourses(key) {
         return _.sortBy(this.getAllCourses(), key)
     }
-    getHoursStatistics(lengthInterval) {
-        let minInt = this.#courseData.minHours;
-        let key = this.#courseData.minHours/lengthInterval;
-        const hourStat = new Array((this.#courseData.maxHours - this.#courseData.minHours)/lengthInterval);
-        return hourStat.map(n => {n = this.getObjHours(key, minInt, lengthInterval);
-        minInt += lengthInterval; key++; return n});
+    #getStatistics(interval, field) {
+        const courses = this.getAllCourses();
+        const objStat =  _.countBy(courses, e => {   
+            return Math.floor(e[field]/interval);
+         });
+         return Object.keys(objStat).map(s => {
+             return {minInterval: s * interval,
+                 maxInterval: s * interval + interval -1,
+                amount: objStat[s]}
+         })
     }
-    getObjHours(key, minInt, lengthInterval) {
-        let maxInt = minInt+lengthInterval;
-        let objHour = {'minInterval': minInt, 
-        'maxInterval' : maxInt, 
-        'amount' : getAmountHour(key)};
-        return objHour;
-    }
-    getAmountHour(key) {
-       const amountObj =  _.countBy(this.#courses, (course) => Math.floor(course.hours/lengthInterval));
-       return amountObj[key];
+     getHoursStatistics(lengthInterval){
+        return this.#getStatistics(lengthInterval, 'hours');
     }
     getCostStatistics(lengthInterval) {
-        let minInt = this.#courseData.minCost;
-        let key = this.#courseData.minCost/lengthInterval;
-        const costStat = new Array(Math.floor((this.#courseData.maxCost - this.#courseData.minCost)/lengthInterval));
-        return costStat.map(n => {n = this.getObjCost(key, minInt, lengthInterval);
-        minInt += lengthInterval; key++; return n});
+        return this.#getStatistics(lengthInterval, 'cost')
     }
-    getObjCost(key, minInt, lengthInterval) {
-        let maxInt = minInt+lengthInterval;
-        let objCost = {'minInterval': minInt, 
-        'maxInterval' : maxInt, 
-        'amount' : getAmountCost(key)};
+    removeCourse(id) {
+        if (!this.#courses.exists(id)) {
+            throw `course with id ${id} not found`
+        }
+        return this.#courses.remove(id);
+    }
 
-        return objHour;
-    }
-    getAmountCost(key) {
-       const amountObj =  _.countBy(this.#courses, (course) => Math.floor(course.cost/lengthInterval));
-       return amountObj[key];
-    }
+   
 }
