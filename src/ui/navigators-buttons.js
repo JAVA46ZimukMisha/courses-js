@@ -4,7 +4,6 @@ export default class NavigatorButtons {
         this.#idValues = idValues;
     }
     setActive(index) {
-        this.#idValues.forEach(b => document.getElementById(b).classList.add("btn", "btn-light"));
         const activeButton = document.getElementById(this.#idValues[index]);
         activeButton.classList.add("btn-primary"); 
         activeButton.classList.remove("btn-light");
