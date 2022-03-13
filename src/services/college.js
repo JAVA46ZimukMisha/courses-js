@@ -8,7 +8,7 @@ export default class College {
         this.#courses = courses;
         this.#courseData = courseData;
     }
-    addCourse(course) {
+    async addCourse(course) {
         //TODO validation of the course data
         //if course is valid, then course should be added : this.#courses.add(course)
         //if course is invalid, then the method returns full message describing what's wrong
@@ -19,7 +19,7 @@ export default class College {
         course.openingDate = new Date(course.openingDate);
         const validationMessage = this.#getValidationMessage(course);
         if(!validationMessage) {
-           return this.#courses.add(course);
+           return await this.#courses.add(course);
         } 
         return validationMessage;
     }
@@ -39,14 +39,14 @@ export default class College {
           `wrong opening date - year should be in range [${minYear} - ${maxYear}]` : ''
          return message;
     }
-    getAllCourses() {
-        return this.#courses.get()
+    async getAllCourses() {
+        return await this.#courses.get()
     }
-    sortCourses(key) {
-        return _.sortBy(this.getAllCourses(), key)
+    async sortCourses(key) {
+        return _.sortBy(await this.getAllCourses(), key)
     }
-    #getStatistics(interval, field) {
-        const courses = this.getAllCourses();
+    async #getStatistics(interval, field) {
+        const courses = await this.getAllCourses();
         const objStat =  _.countBy(courses, e => {   
             return Math.floor(e[field]/interval);
          });
@@ -56,11 +56,11 @@ export default class College {
                 amount: objStat[s]}
          })
     }
-     getHoursStatistics(lengthInterval){
-        return this.#getStatistics(lengthInterval, 'hours');
+     async getHoursStatistics(lengthInterval){
+        return await this.#getStatistics(lengthInterval, 'hours');
     }
-    getCostStatistics(lengthInterval) {
-        return this.#getStatistics(lengthInterval, 'cost')
+    async getCostStatistics(lengthInterval) {
+        return await this.#getStatistics(lengthInterval, 'cost')
     }
     removeCourse(id) {
         if (!this.#courses.exists(id)) {

@@ -1,3 +1,4 @@
+import { getPromise } from "../services/courses";
 export default class FormHandler {
     #formElement
     #alertElement
@@ -8,15 +9,14 @@ export default class FormHandler {
         this.#inputElements = document.querySelectorAll(`#${idForm} [name]`);
     }
     addHandler(fnProcessor) {
-        this.#formElement.addEventListener('submit', event => {
+        this.#formElement.addEventListener('submit', async event => {
             event.preventDefault();
             const data = Array.from(this.#inputElements)
             .reduce((obj, element) => {
                 obj[element.name] = element.value;
                 return obj;
             }, {})
-            console.log(data)
-            const message = fnProcessor(data);
+            const message = await fnProcessor(data);
             if (!message) {
                 this.#formElement.reset(); //everything ok
                 this.#alertElement.innerHTML = '';
@@ -30,18 +30,9 @@ export default class FormHandler {
             }
         })
     }
-    createHandler(fnProcessor) {
-        let courses = [];
-        this.#formElement.addEventListener('submit', event => {
-            event.preventDefault();
-            let amount = Array.from(this.#inputElements);
-            courses = fnProcessor(courses, amount[0].value);
-        })
-     return courses;
-    }
-    fillOptions(idOptions, options ) {
+    async fillOptions(idOptions, options ) {
         document.getElementById(idOptions).innerHTML += 
-        `${getOptions(options)}`
+        `${await getOptions(options)}`
     }
     show() {
         this.#formElement.hidden = false;
@@ -51,5 +42,5 @@ export default class FormHandler {
     }
 }
 function getOptions(options) {
-    return options.map(o => `<option value="${o}">${o}</option>`).join('');
+    return getPromise(1000, options.map(o => `<option value="${o}">${o}</option>`).join(''));
 }

@@ -5,21 +5,16 @@ import FormHandler from './ui/form_handler';
 import TableHandler from './ui/table_handler';
 import { getRandomCourse } from './utils/randomCourse';
 import _ from 'lodash'
-import NavigatorButtons from './ui/navigators-buttons';
+import NavigatorButtons from './ui/navigator_buttons';
+import Spinner from './ui/spinner';
 const statisticsColumnDefinition = [
     { key: "minInterval", displayName: "From" },
     { key: "maxInterval", displayName: "To" },
     { key: "amount", displayName: "Amount" }
 ]
-const courseGenerate = new FormHandler("amount-courses", "alert");
-const courses = courseGenerate.createHandler((courses, amount) => {
-    for (let i = 0; i < amount; i++) {
-        courses.push(getRandomCourse(courseData));
-    }
-    return courses;
-})
 
-const dataProvider = new Courses(courseData.minId, courseData.maxId, courses);
+const spinner = new Spinner("spinner");
+const dataProvider = new Courses(courseData.minId, courseData.maxId);
 const dataProcessor = new College(dataProvider, courseData);
 const tableHandler = new TableHandler([
     { key: 'id', displayName: 'ID' },
@@ -29,14 +24,30 @@ const tableHandler = new TableHandler([
     { key: 'hours', displayName: "Duration (h)" }
 ], "courses-table", "sortCourses", "removeCourse");
 const formHandler = new FormHandler("courses-form", "alert");
-const activeNavigator = new NavigatorButtons (["addCourse", "showCourse", "showHours", "showCost", "amount"]);
-formHandler.addHandler(course => {
-    const res = dataProcessor.addCourse(course);
+const generationHandler = new FormHandler("generation-form", "alert");
+const navigator = new NavigatorButtons(["0","1","2", "3", "4"])
+formHandler.addHandler(async course => {
+    spinner.start();
+    const res = await dataProcessor.addCourse(course);
+    spinner.stop();
     if (typeof (res) !== 'string') {
         return '';
     }
     return res;
 
+})
+generationHandler.addHandler(async generation => {
+    let message;
+    spinner.start()
+    if (generation.nCourses<0) {
+        message = `Error! Message should be more than 0`
+    }
+    for (let i=0; i < generation.nCourses; i++) {
+        await dataProcessor.addCourse(await getRandomCourse(courseData));
+        message = '';
+    }
+    spinner.stop();
+    return message;
 })
 formHandler.fillOptions("course-name-options", courseData.courses);
 formHandler.fillOptions("lecturer-options", courseData.lectors);
@@ -47,43 +58,55 @@ const tableCostStatistics =
 function hide() {
     tableHandler.hideTable();
     formHandler.hide();
+    generationHandler.hide();
     tableHoursStatistics.hideTable();
     tableCostStatistics.hideTable();
-    courseGenerate.hide();
 
 }
+window.showGeneration = () => {
+    hide();
+    navigator.setActive(4);
+    generationHandler.show();
+}
 window.showForm = () => {
+    spinner.start();
     hide();
+    navigator.setActive(0);
     formHandler.show();
-    activeNavigator.setActive(0);
+    spinner.stop();
 }
-window.showCourses = () => {
+window.showCourses = async () => {
+    spinner.start();
     hide();
-    tableHandler.showTable(dataProcessor.getAllCourses());
-    activeNavigator.setActive(1);
+    navigator.setActive(1);
+    tableHandler.showTable(await dataProcessor.getAllCourses());
+    spinner.stop();
 }
-window.showHoursStatistics = () => {
+window.showHoursStatistics = async () => {
+    spinner.start();
     hide()
-    tableHoursStatistics.showTable(dataProcessor.getHoursStatistics(courseData.hoursInterval));
-    activeNavigator.setActive(2);
+    navigator.setActive(2);
+    tableHoursStatistics.showTable(await dataProcessor.getHoursStatistics(courseData.hoursInterval));
+    spinner.stop();
 }
-window.showCostStatistics = () => {
+window.showCostStatistics = async () => {
+    spinner.start();
     hide()
-    tableCostStatistics.showTable(dataProcessor.getCostStatistics(courseData.costInterval));
-    activeNavigator.setActive(3);
+    navigator.setActive(3);
+    tableCostStatistics.showTable(await dataProcessor.getCostStatistics(courseData.costInterval));
+    spinner.stop();
 }
-window.showAmountCoursesForm = () => {
-    hide()
-    courseGenerate.show();
-    activeNavigator.setActive(4);
+window.sortCourses = async (key) => {
+    spinner.start();
+    tableHandler.showTable(await dataProcessor.sortCourses(key))
+    spinner.stop();
 }
-window.sortCourses = (key) => {
-    tableHandler.showTable(dataProcessor.sortCourses(key))
-}
-window.removeCourse = (id) => {
+window.removeCourse = async (id) => {
     if (window.confirm(`you are going to remove course id: ${id}`)) {
+        spinner.start();
         dataProcessor.removeCourse(+id);
-        tableHandler.showTable(dataProcessor.getAllCourses());
+        tableHandler.showTable(await dataProcessor.getAllCourses());
+        spinner.stop();
     }
 
 }
