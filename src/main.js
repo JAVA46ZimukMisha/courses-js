@@ -69,11 +69,9 @@ window.showGeneration = () => {
     generationHandler.show();
 }
 window.showForm = () => {
-    spinner.start();
     hide();
     navigator.setActive(0);
     formHandler.show();
-    spinner.stop();
 }
 window.showCourses = async () => {
     spinner.start();
