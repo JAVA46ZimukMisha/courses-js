@@ -18,12 +18,12 @@ export default class NavigatorButtons {
         const ind = this.#activeIndex;
         const btnElement = this.#buttons[ind];
         btnElement.classList.remove("bg-primary");
-        btnElement.classList.add("bg-secondary");
+        btnElement.classList.remove("text-white");
     }
     #showStyles() {
         const ind = this.#activeIndex;
         const btnElement = this.#buttons[ind];
         btnElement.classList.add("bg-primary");
-        btnElement.classList.remove("bg-secondary");
+        btnElement.classList.add("text-white");
     }
 }

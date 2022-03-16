@@ -1,5 +1,4 @@
 import _ from "lodash";
-
 // Data processor
 export default class College {
     #courseData
@@ -19,7 +18,8 @@ export default class College {
         course.openingDate = new Date(course.openingDate);
         const validationMessage = this.#getValidationMessage(course);
         if(!validationMessage) {
-           return await this.#courses.add(course);
+            course.openingDate = `${course.openingDate.getFullYear()}-${course.openingDate.getMonth()}-${course.openingDate.getDate()}`;
+            return await this.#courses.add(course);
         } 
         return validationMessage;
     }
@@ -56,17 +56,17 @@ export default class College {
                 amount: objStat[s]}
          })
     }
-     async getHoursStatistics(lengthInterval){
-        return await this.#getStatistics(lengthInterval, 'hours');
+      getHoursStatistics(lengthInterval){
+        return this.#getStatistics(lengthInterval, 'hours');
     }
-    async getCostStatistics(lengthInterval) {
-        return await this.#getStatistics(lengthInterval, 'cost')
+    getCostStatistics(lengthInterval) {
+        return this.#getStatistics(lengthInterval, 'cost')
     }
-    removeCourse(id) {
-        if (!this.#courses.exists(id)) {
+    async removeCourse(id) {
+        if (!await this.#courses.exists(id)) {
             throw `course with id ${id} not found`
         }
-        return this.#courses.remove(id);
+        return await this.#courses.remove(id);
     }
 
    

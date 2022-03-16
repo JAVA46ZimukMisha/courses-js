@@ -1,18 +1,15 @@
 export default class Spinner {
-    #idSpinner
-    constructor (idSpinner) {
-        this.#idSpinner = idSpinner
+    #spinnerParentElem
+    constructor(parentId) {
+        this.#spinnerParentElem = document.getElementById(parentId);
+
     }
     start() {
-        const spinner = document.getElementById(this.#idSpinner);
-        spinner.innerHTML = `<button class="btn btn-primary" type="button" disabled>
-        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-        <span class="sr-only">Loading...</span>
-      </button>`;
-      spinner.classList.add("mt-5")
+        this.#spinnerParentElem.innerHTML = `<div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>`
     }
     stop() {
-      const spinner = document.getElementById(this.#idSpinner);
-      spinner.innerHTML = ``;
+        this.#spinnerParentElem.innerHTML=''
     }
 }

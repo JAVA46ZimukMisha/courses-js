@@ -1,4 +1,3 @@
-import { getPromise } from "../services/courses";
 export default class FormHandler {
     #formElement
     #alertElement
@@ -30,9 +29,9 @@ export default class FormHandler {
             }
         })
     }
-    async fillOptions(idOptions, options ) {
+    fillOptions(idOptions, options ) {
         document.getElementById(idOptions).innerHTML += 
-        `${await getOptions(options)}`
+        `${getOptions(options)}`
     }
     show() {
         this.#formElement.hidden = false;
@@ -42,5 +41,5 @@ export default class FormHandler {
     }
 }
 function getOptions(options) {
-    return getPromise(1000, options.map(o => `<option value="${o}">${o}</option>`).join(''));
+    return options.map(o => `<option value="${o}">${o}</option>`).join('');
 }

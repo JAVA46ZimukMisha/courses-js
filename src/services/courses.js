@@ -1,7 +1,7 @@
 // fake Data provisioning module
 
 import { getRandomNumber } from "../utils/random";
-export function getPromise(timeout, value) {
+function getPromise(timeout, value) {
     return new Promise(resolve => {
         setTimeout(() => {
             resolve(value)
@@ -19,24 +19,24 @@ export default class Courses {
         this.#maxId = maxId ?? 10000000;
 
     }
-    async add(course) {
-        course.id = await this.#getId();
+    add(course) {
+        course.id = this.#getId();
         this.#courses.push(course);
         return getPromise(1000, course);
     }
-    async #getId() {
+    #getId() {
         //return unique value of id
         let id;
         do {
-            id = await getRandomNumber(this.#minId, this.#maxId)
+            id = getRandomNumber(this.#minId, this.#maxId)
         }while(this.exists(id));
         return id;
     }
     exists(id) {
-        return !!this.#courses.find(c => c.id === id);
+        return getPromise(100, !!this.#courses.find(c => c.id === id));
     }
     get() {
-        return getPromise(1000, this.#courses);
+        return getPromise(2000, this.#courses);
     }
     remove(id) {
         const index = this.#courses.findIndex(c => c.id === id);

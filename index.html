@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" style="height: 100%;">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -11,22 +11,22 @@
         <title>Document</title>
 </head>
 
-<body style="position:relative; height: 100%">
+<body>
     <ul id="courses">
 
     </ul>
     <div id="alert">
 
     </div>
-   
-    <button id="0" class="bg-secondary text-white" onclick="showForm()">Add Course</button>
-    <button id="1" class="bg-secondary text-white" onclick="showCourses()">Show Courses</button>
-    <button id="2" class="bg-secondary text-white" onclick="showHoursStatistics()">Show Hours Statistics</button>
-    <button id="3" class="bg-secondary text-white" onclick="showCostStatistics()">Show Cost Statistics</button>
-    <button id="4" class="bg-secondary text-white" onclick="showGeneration()">Show Generate Courses</button>
-    <div id="spinner"  style="position:absolute; top: 37%; left: 48%;">
+    <div id="alertServer">
 
     </div>
+   
+    <button id="0" onclick="showForm()">Add Course</button>
+    <button id="1" onclick="showCourses()">Show Courses</button>
+    <button id="2" onclick="showHoursStatistics()">Show Hours Statistics</button>
+    <button id="3" onclick="showCostStatistics()">Show Cost Statistics</button>
+    <button id="4" onclick="showGeneration()">Show Generate Courses</button>
     <div id="alert"></div>
     <form id="generation-form" class="mt-5 mt-lg-5 mt-sm-2" hidden>
         <div class="container mt-4">
@@ -78,7 +78,9 @@
 
     </table>
    
+<div id="spinner" class="position-absolute top-50 start-50">
 
+</div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
         crossorigin="anonymous"></script>
